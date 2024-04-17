@@ -130,8 +130,8 @@
             <label>Day:</label> <input class="form-control" type="text" placeholder="Day" value="@day">
             <label>Time:</label> <input class="form-control" type="text" placeholder="Time" value="@time">
             <label>Cost:</label> <input class="form-control" type="text" placeholder="Cost" value="@cost">
-            <label>Name:</label> <input class="form-control" type="text" placeholder="Name" bind="@passengerName">
-            <label>Citizenship:</label> <input class="form-control" type="text" placeholder="Citizenship" bind="@passengerCitizenship">
+            <label>Name:</label> <input class="form-control" type="text" placeholder="Name" @bind="@passengerName">
+            <label>Citizenship:</label> <input class="form-control" type="text" placeholder="Citizenship" @bind="@passengerCitizenship">
 
         </div>
 
@@ -158,25 +158,25 @@
     /* Needs null checks. */
 
     // value="@flightId">
-    string flightId;
+    private string flightId;
 
     // value="@airline">
-    string airline;
+    private string airline;
 
     // value="@day">
-    string day;
+    private string day;
 
     // value="@time">
-    string time;
+    private string time;
 
     // value="@cost">
-    decimal cost;
+    private decimal cost;
 
     // bind="@passengerName">
-    string passengerName;
+    private string passengerName;
 
     // bind="@passengerCitizenship">
-    string passengerCitizenship;
+    private string passengerCitizenship;
 
 
 
@@ -276,7 +276,7 @@
         }
         else if (selectedFlight == null)
         {
-            throw new Exception("Flight not found in flightList, somehow!");  // Exception handling must propt user.
+            throw new Exception("Flight not found in flightList, somehow!");  // User should not be able to trigger this, only bad code.
         }
         else if (selectedFlight.AvailableSeats <= 0)
         {

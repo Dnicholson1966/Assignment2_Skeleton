@@ -119,7 +119,7 @@ namespace FlightBookingSystem.Components.Repository
                 try
                 {
                 using var stream = await FileSystem.OpenAppPackageFileAsync(ReservationFile);
-                using var streamWriter = new StreamWriter(stream);
+                using var streamWriter = new StreamWriter(stream); // This line is breaking.
                 using var csvWriter = new CsvWriter(streamWriter, CultureInfo.InvariantCulture);
 
                 csvWriter.WriteRecord(reservedFlight); // Needs testing, haven't used before.
