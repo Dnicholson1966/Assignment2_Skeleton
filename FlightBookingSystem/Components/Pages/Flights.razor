@@ -1,0 +1,312 @@
+﻿@page "/flights"
+
+@using FlightBookingSystem.Components.ViewModel
+@using FlightBookingSystem.Components.Model;
+@using FlightBookingSystem.Components.Repository; <!-- Used for Booking a Reservation. -->
+
+
+<style>
+    /*Add CSS styling here*/
+    header {
+        padding: 10px;
+        text-align: center;
+    }
+
+    .row {
+        align-items: center;
+        margin-bottom: 10px;
+    }
+
+    label {
+        font-weight: bold;
+    }
+</style>
+
+<div class="container">
+    <div class="row">
+        <div>
+            <header class="align-content-center">
+                <h3>Flight Finder</h3>
+            </header>
+        </div>
+        <div class="row">
+
+            <!-- Select dropdown for Source -->
+            <div class="col-sm-3">
+                <label for="srcSelector">From: </label>
+                <select name="srcSelector" class="form-control" @bind="srcValue">
+                    <option value="@Utils.ANY">@Utils.ANY</option>
+                    @if (airports == null)
+                    {
+                        <option>Loading...</option>
+                    }
+                    else
+                    {
+                        @foreach (var a in airports)
+                        {
+                            <option value=@a>@a</option>
+                        }
+                    }
+                </select>
+            </div>
+
+            <!-- Select dropdown for Destination -->
+            <div class="col-sm-3">
+                <label for="destSelector">To: </label>
+                <select name="destSelector" class="form-control" @bind="destValue">
+                    <option value="Any">@Utils.ANY</option>
+                    @if (airports == null)
+                    {
+                        <option>Loading...</option>
+                    }
+                    else
+                    {
+                        @foreach (var a in airports)
+                        {
+                            <option value=@a>@a</option>
+                        }
+                    }
+                </select>
+            </div>
+
+            <!-- Select dropdown for Day -->
+            <div class="col-sm-3">
+                <label for="daySelector">Day: </label>
+                <select name="daySelector" class="form-control" @bind="dayValue">
+                    <option value="@Utils.ANY">@Utils.ANY</option>
+                    <option value="@Utils.SUNDAY">@Utils.SUNDAY</option>
+                    <option value="@Utils.MONDAY">@Utils.MONDAY</option>
+                    <option value="@Utils.TUESDAY">@Utils.TUESDAY</option>
+                    <option value="@Utils.WEDNESDAY">@Utils.WEDNESDAY</option>
+                    <option value="@Utils.THURSDAY">@Utils.THURSDAY</option>
+                    <option value="@Utils.FRIDAY">@Utils.FRIDAY</option>
+                    <option value="@Utils.SATURDAY">@Utils.SATURDAY</option>
+                </select>
+            </div>
+
+            <!-- Find Flights Button -->
+            <div class="col-sm-3">
+                <button class="btn btn-primary form-control" @onclick="@FindFlights">Find flights</button>
+            </div>
+
+        </div>
+    </div>
+
+    <div class="row">
+        <header class="align-content-center">
+            <h3>Flights</h3>
+        </header>
+        <div class="row">
+            <label for="fliteredFlights">Flight Search Result:</label>
+            <select name="fliteredFlights" class="form-control" @onchange="@fillForm">
+                @if (flightList == null || flightList.Count == 0)
+                {
+                    <option>Select Search Criteria</option>
+                }
+                else
+                {
+                    <option>Select a flight from this list</option>
+                    @foreach (var f in flightList)
+                    {
+                        <option value=@f.FlightId>@f.FlightId , @f.Airline, @f.Source.Name, @f.Destination.Name, @f.Day, @f.Time, @f.Cost</option>
+                    }
+                }
+
+            </select>
+        </div>
+    </div>
+
+
+    <div class="row">
+        <!-- Add UI code for Reserve Section -->
+        <div class="row">
+
+            <header class="align-content-center">
+                <h3>Reserve</h3>
+            </header>
+
+            <label>Flight code:</label> <input class="form-control" type="text" placeholder="Flight" value="@flightId">
+            <label>Airline</label> <input class="form-control" type="text" placeholder="Flight" value="@airline">
+            <label>Day:</label> <input class="form-control" type="text" placeholder="Flight" value="@day">
+            <label>Time:</label> <input class="form-control" type="text" placeholder="Flight" value="@time">
+            <label>Cost:</label> <input class="form-control" type="text" placeholder="Flight" value="@cost">
+            <label>Name:</label> <input class="form-control" type="text" placeholder="Flight" bind="@passengerName">
+            <label>Citizenship:</label> <input class="form-control" type="text" placeholder="Citizenship" bind="@passengerCitizenship">
+
+        </div>
+
+        <div class="d-grid gap-2" style="padding:10px; width:200px">
+            <button class="btn btn-primary form-control" @onclick="@ReserveFlight">Reserve</button>
+        </div>
+        <!-- Add Alert message for user's Reservation Code, when ReserveFlight is triggered. -->
+    </div>
+
+    <div class="row">
+        <!-- Add UI code for Search Reservation Section. We are running out of time so we will put on one page. -->
+    </div>
+
+</div>
+
+
+
+
+@code {
+    private FlightManager fm = FlightManager.INSTANCE;
+
+
+    /******************** Reservation section code ********************/
+    /* Needs null checks. */
+
+    // value="@flightId">
+    string flightId;
+
+    // value="@airline">
+    string airline;
+
+    // value="@day">
+    string day;
+
+    // value="@time">
+    string time;
+
+    // value="@cost">
+    decimal cost;
+
+    // bind="@passengerName">
+    string passengerName;
+
+    // bind="@passengerCitizenship">
+    string passengerCitizenship;
+
+
+
+    /************** I don't know if these values are used.
+     * It was in Intstructor's video, it's not part of the window requirements? **************/
+    int available_seats;
+
+    // Already determined by the flights selector? When is this used?
+    Airport source;
+
+    // Already determined by the flights selector? When is this used?
+    Airport dest;
+
+
+
+
+
+
+    /******************** For Flights selector. ********************/
+    /* Needs null checks. */
+    private string srcValue;
+    private string destValue;
+    private string dayValue = Utils.ANY;
+    private List<string> airports = FlightManager.GetAiportCodeList();
+    private List<Flight> flightList = new();
+
+
+    private void FindFlights()
+    {
+        flightList = fm.FindFlights(srcValue, destValue, dayValue);
+    }
+
+    /// <summary>
+    /// When user select any flight from the Flight Search Result selection menu, this method will be called.
+    /// Binds the flight details to input boxes in Reservation section.
+    /// </summary>
+    /// <param name="e">OnChange Event.</param>
+    private void fillForm(ChangeEventArgs e)
+    {
+        if (e != null)
+        {
+            String selectedFlightId = e.Value.ToString();
+
+            // Loads the reservation data into the reserve section.
+            this.loadReservationData(selectedFlightId);
+            refreshUI();
+        }
+    }
+
+
+
+    /// <summary>
+    /// Loads the front-end reservation data in the Reservation section.
+    /// Needs testing.
+    /// </summary>
+    /// <param name="FlightID"></param>
+    private void loadReservationData(string FlightID)
+    {
+
+        Flight selectedFlight = fm.getFlightById(FlightID, flightList); // Needs testing.
+        if (selectedFlight != null)
+        {
+            flightId = FlightID;
+            airline = selectedFlight.Airline;
+            day = selectedFlight.Day;
+            time = selectedFlight.Time;
+            cost = selectedFlight.Cost;
+            available_seats = selectedFlight.AvailableSeats; // Not sure if used.
+            source = selectedFlight.Source; // Not sure if used.
+            dest = selectedFlight.Destination; // Not sure if used.
+        }
+    }
+
+    /// <summary>
+    /// Needs to grab a selected flight from the Flights drop down (Like loadReservationData),
+    /// then read name & citizenship (prompt user if empty),
+    /// then create a reservation object based on data,
+    /// then write reservation object to "Reservations.csv".
+    /// </summary>
+    private void ReserveFlight()
+    {
+        Flight selectedFlight = null;
+        Reservation reservedFlight;
+
+        foreach (Flight f in flightList)
+        {
+            if (f.FlightId == flightId)
+            {
+                selectedFlight = f;
+                break;
+            }
+        }
+
+        if ((passengerName == null) || (passengerCitizenship == null))
+        {
+            throw new Exception("Please enter your name & Citizenship."); // There are marks here to create an alert. Might not have time.
+        }
+        else if (selectedFlight == null)
+        {
+            throw new Exception("Flight not found in flightList, somehow!");  // There are marks here to create an alert. Might not have time.
+        }
+        else if (selectedFlight.AvailableSeats <= 0)
+        {
+            throw new Exception("Flights are fully booked."); // There are marks here to create an alert. Might not have time.
+        }
+        else if (selectedFlight.AvailableSeats > 0)
+        {
+            // Create Reservation object.
+            reservedFlight = new Reservation(selectedFlight, passengerName, passengerCitizenship);
+
+            // Increment Flight booked seats.
+            selectedFlight.BookedSeats += 1;
+
+            // Write this reservation to Reservation file. Invoke DBManager, or copy code here if issues.
+            DBManager.INSTANCE.WriteReservation(reservedFlight);
+
+            // Send an alert message to the GUI, with user's Reservation code. Be sure to reuse this for the alerts above!
+
+        }
+    }
+
+
+    /// <summary>
+    /// I think this reloads the UI in Blazor?
+    /// Run when any UI elements change (Reloads the page)
+    /// Instructor stated it had something to do with having multiple functions in muliple razor files,
+    /// amd that we should stick to one .razor file to avoid complications.
+    /// </summary>
+    public void refreshUI()
+    {
+        this.InvokeAsync(StateHasChanged);
+    }
+}
