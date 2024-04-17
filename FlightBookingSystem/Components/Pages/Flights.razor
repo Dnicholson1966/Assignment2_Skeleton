@@ -126,11 +126,11 @@
             </header>
 
             <label>Flight code:</label> <input class="form-control" type="text" placeholder="Flight" value="@flightId">
-            <label>Airline</label> <input class="form-control" type="text" placeholder="Flight" value="@airline">
-            <label>Day:</label> <input class="form-control" type="text" placeholder="Flight" value="@day">
-            <label>Time:</label> <input class="form-control" type="text" placeholder="Flight" value="@time">
-            <label>Cost:</label> <input class="form-control" type="text" placeholder="Flight" value="@cost">
-            <label>Name:</label> <input class="form-control" type="text" placeholder="Flight" bind="@passengerName">
+            <label>Airline</label> <input class="form-control" type="text" placeholder="Airline" value="@airline">
+            <label>Day:</label> <input class="form-control" type="text" placeholder="Day" value="@day">
+            <label>Time:</label> <input class="form-control" type="text" placeholder="Time" value="@time">
+            <label>Cost:</label> <input class="form-control" type="text" placeholder="Cost" value="@cost">
+            <label>Name:</label> <input class="form-control" type="text" placeholder="Name" bind="@passengerName">
             <label>Citizenship:</label> <input class="form-control" type="text" placeholder="Citizenship" bind="@passengerCitizenship">
 
         </div>
@@ -272,15 +272,15 @@
 
         if ((passengerName == null) || (passengerCitizenship == null))
         {
-            throw new Exception("Please enter your name & Citizenship."); // There are marks here to create an alert. Might not have time.
+            throw new Exception("Please enter your name & Citizenship."); // Exception handling must propt user.
         }
         else if (selectedFlight == null)
         {
-            throw new Exception("Flight not found in flightList, somehow!");  // There are marks here to create an alert. Might not have time.
+            throw new Exception("Flight not found in flightList, somehow!");  // Exception handling must propt user.
         }
         else if (selectedFlight.AvailableSeats <= 0)
         {
-            throw new Exception("Flights are fully booked."); // There are marks here to create an alert. Might not have time.
+            throw new Exception("Flights are fully booked."); // Exception handling must propt user.
         }
         else if (selectedFlight.AvailableSeats > 0)
         {
