@@ -115,18 +115,19 @@ namespace FlightBookingSystem.Components.Repository
         }
 
         /// <summary>
-        /// Writes a given reservation to "reservations.csv" file, asynchronously.
-        /// 
+        /// Writes a given reservation to "reservations.csv" file.
+        /// I did not use synchronous writing, I think it was disrupting CsvWriter. Unsure.
         /// </summary>
         /// <param name="reservation">Reservation user has booked.</param>
         /// <returns></returns>
         /// <exception cref="FileNotFoundException"></exception>
         /// <exception cref="NullReferenceException"></exception>
-        public async Task WriteReservation(Reservation reservation)
+        public void WriteReservation(Reservation reservation)
         {
                 try
                 {
-                using Stream stream = await FileSystem.OpenAppPackageFileAsync(ReservationFile);
+                // using Stream stream = await FileSystem.OpenAppPackageFileAsync(ReservationFile);
+                using Stream stream = File.OpenWrite(ReservationFile);
                 using StreamWriter streamWriter = new(stream); // This line is freezing.
                 using var csvWriter = new CsvWriter(streamWriter, CultureInfo.InvariantCulture);
 
