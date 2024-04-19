@@ -290,7 +290,7 @@
             // Increment Flight booked seats.
             selectedFlight.BookedSeats += 1;
 
-            // Write this reservation to Reservation file. Invoke DBManager, or copy code here if issues.
+            // Write this reservation to Reservation file.
             DBManager.INSTANCE.WriteReservation(reservedFlight);
 
             // Send an alert message to the GUI, with user's Reservation code. Be sure to reuse this for the alerts above!

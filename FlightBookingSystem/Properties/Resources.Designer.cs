@@ -59,5 +59,78 @@ namespace FlightBookingSystem.Properties {
                 resourceCulture = value;
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to D:\SchoolFiles2024\OB Programming\MajorAssignments\Assignment 2\Assignment2_Skeleton\FlightBookingSystem\Resources\Raw\airports.csv.
+        /// </summary>
+        internal static string AirportFile {
+            get {
+                return ResourceManager.GetString("AirportFile", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to YYC,Calgary International Airport
+        ///YEG,Edmonton International Airport
+        ///YUL,Montreal Pierre Elliott Trudeau International Airport
+        ///YOW,Ottawa Macdonald-Cartier International Airport
+        ///YYZ,Toronto Pearson International Airport
+        ///YVR,Vancouver International Airport
+        ///YWG,Winnipeg James Armstrong Richardson International Airport
+        ///ATL,Hartsfield-Jackson Atlanta International Airport
+        ///PEK,Beijing Capital International Airport
+        ///DXB,Dubai International Airport
+        ///HKG,Hong Kong International Airport
+        ///LHR,London Heathrow  [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string airports {
+            get {
+                return ResourceManager.GetString("airports", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to D:\SchoolFiles2024\OB Programming\MajorAssignments\Assignment 2\Assignment2_Skeleton\FlightBookingSystem\Resources\Raw\flights.csv.
+        /// </summary>
+        internal static string FlightFile {
+            get {
+                return ResourceManager.GetString("FlightFile", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to TB-4017,Try a Bus Airways,ATL,FRA,Monday,18:30,174,1444.00
+        ///SL-4367,Scare Airlines,YYC,YEG,Thursday,21:30,50,270.00
+        ///AL-6488,Always Late Airlines,PEK,YVR,Saturday,0:30,292,4710.00
+        ///SL-9996,Scare Airlines,DFW,FRA,Sunday,21:00,255,1188.00
+        ///SW-3491,Sprawl Airways,YVR,PEK,Thursday,8:30,255,1086.00
+        ///SL-9465,Scare Airlines,YEG,CDG,Sunday,7:15,292,1456.00
+        ///SL-2797,Scare Airlines,YOW,CDG,Saturday,23:30,255,1060.00
+        ///MA-6635,Mediocre Airlines,YUL,DFW,Friday,15:00,169,449.00
+        ///CA-1858,Conned Air,YOW,AMS,Tuesday,20:15,2 [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string flights {
+            get {
+                return ResourceManager.GetString("flights", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to D:\SchoolFiles2024\OB Programming\MajorAssignments\Assignment 2\Assignment2_Skeleton\FlightBookingSystem\Resources\Raw\reservations.csv.
+        /// </summary>
+        internal static string ReservationFile {
+            get {
+                return ResourceManager.GetString("ReservationFile", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to TB-9211,Try a Bus Airways,Friday,21:30,270.00,Derrick Nicholson,Canadian,.
+        /// </summary>
+        internal static string reservations {
+            get {
+                return ResourceManager.GetString("reservations", resourceCulture);
+            }
+        }
     }
 }

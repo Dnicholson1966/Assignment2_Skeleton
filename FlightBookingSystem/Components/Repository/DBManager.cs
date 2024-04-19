@@ -18,7 +18,13 @@ namespace FlightBookingSystem.Components.Repository
     {
         private static readonly string AiportFile = "airports.csv";
         private static readonly string FlightFile = "flights.csv";
-        private static readonly string ReservationFile = "D://SchoolFiles2024//OB Programming//MajorAssignments//Assignment 2//Assignment2_Skeleton//FlightBookingSystem//Resources//Raw//reservations.csv";
+
+        /* I've noticed if I don't make the methods that utilize the ReservationFile variable look exactly like the above code, it will break.
+         * This is because this string is not a fully Qualified Path, and the method itself is doing further logic on this string to point to the file correctly.
+         * I don't exactly know what this further logic is, but something to do with "OpenAppPackageFileAsync() = Opens a file *contained within this app package*"
+         */
+        private static readonly string ReservationFile = "reservations.csv";
+
         private readonly FlightManager flightManager;
 
 
@@ -122,16 +128,16 @@ namespace FlightBookingSystem.Components.Repository
         /// <returns></returns>
         /// <exception cref="FileNotFoundException"></exception>
         /// <exception cref="NullReferenceException"></exception>
-        public void WriteReservation(Reservation reservation)
+        public async Task WriteReservation(Reservation reservation)
         {
                 try
                 {
-                // using Stream stream = await FileSystem.OpenAppPackageFileAsync(ReservationFile);
-                using Stream stream = File.OpenWrite(ReservationFile);
-                using StreamWriter streamWriter = new(stream); // This line is freezing.
+                using Stream stream = await FileSystem.OpenAppPackageFileAsync(ReservationFile); // This method is special, and anything else I've tried for creating a stream object tied to the file does not work. Do not change!
+                
+                using var streamWriter = new StreamWriter(stream); // This line is freezing.
                 using var csvWriter = new CsvWriter(streamWriter, CultureInfo.InvariantCulture);
 
-                csvWriter.WriteRecord(reservation); // Needs testing, haven't used before.
+                csvWriter.WriteRecord(reservation);
                 }
 
             catch (FileNotFoundException)
