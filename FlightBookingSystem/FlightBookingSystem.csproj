@@ -86,4 +86,8 @@
       </EmbeddedResource>
     </ItemGroup>
 
+    <ItemGroup>
+      <Folder Include="Components\Model\DBResources\" />
+    </ItemGroup>
+
 </Project>

@@ -18,7 +18,9 @@ namespace FlightBookingSystem.Components.Repository
     {
         private static readonly string AiportFile = "airports.csv";
         private static readonly string FlightFile = "flights.csv";
-        private static readonly string ReservationFile = "reservations.csv";
+
+        // Note for below: We had to create a new, separate reservations file, since the old one was a read-only embedded resource.
+        private static readonly string ReservationFile = "../Components/Model/DBResources/reservations.csv";
 
         private readonly FlightManager flightManager;
 
@@ -119,7 +121,7 @@ namespace FlightBookingSystem.Components.Repository
 
         /// <summary>
         /// Writes a given reservation to "reservations.csv" file.
-        /// Note I might consider giving up on running as an asycnhronous task. It just didn't seem to work with CsvHelper?
+        /// Note we had to create a new, separate reservations file, since the old one was a read-only embedded resource.
         /// </summary>
         /// <param name="reservation">Reservation user has booked.</param>
         /// <returns></returns>
@@ -130,7 +132,6 @@ namespace FlightBookingSystem.Components.Repository
                 try
                 {
                 using var stream = await FileSystem.OpenAppPackageFileAsync(ReservationFile);
-                
                 // using var streamWriter = new StreamWriter(ReservationFile);
                 // using var csvWriter = new CsvReader(streamReader, CultureInfo.InvariantCulture);
 
