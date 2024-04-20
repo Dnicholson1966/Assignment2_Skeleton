@@ -18,11 +18,6 @@ namespace FlightBookingSystem.Components.Repository
     {
         private static readonly string AiportFile = "airports.csv";
         private static readonly string FlightFile = "flights.csv";
-
-        /* I've noticed if I don't make the methods that utilize the ReservationFile variable look exactly like the above code, it will break.
-         * This is because this string is not a fully Qualified Path, and the method itself is doing further logic on this string to point to the file correctly.
-         * I don't exactly know what this further logic is, but something to do with "OpenAppPackageFileAsync() = Opens a file *contained within this app package*"
-         */
         private static readonly string ReservationFile = "reservations.csv";
 
         private readonly FlightManager flightManager;
@@ -88,7 +83,9 @@ namespace FlightBookingSystem.Components.Repository
         {
             try
             {
+                Console.WriteLine(FileSystem.AppDataDirectory); // Testing. Need more info on this "AppPackage" stuff!
                 using var stream = await FileSystem.OpenAppPackageFileAsync(FlightFile);
+                Console.WriteLine(FileSystem.Current.AppDataDirectory); // Testing.
                 using var reader = new StreamReader(stream);
 
                 string line = reader.ReadLine();
@@ -122,7 +119,7 @@ namespace FlightBookingSystem.Components.Repository
 
         /// <summary>
         /// Writes a given reservation to "reservations.csv" file.
-        /// I did not use synchronous writing, I think it was disrupting CsvWriter. Unsure.
+        /// Note I might consider giving up on running as an asycnhronous task. It just didn't seem to work with CsvHelper?
         /// </summary>
         /// <param name="reservation">Reservation user has booked.</param>
         /// <returns></returns>
@@ -132,12 +129,12 @@ namespace FlightBookingSystem.Components.Repository
         {
                 try
                 {
-                using Stream stream = await FileSystem.OpenAppPackageFileAsync(ReservationFile); // This method is special, and anything else I've tried for creating a stream object tied to the file does not work. Do not change!
+                using var stream = await FileSystem.OpenAppPackageFileAsync(ReservationFile);
                 
-                using var streamWriter = new StreamWriter(stream); // This line is freezing.
-                using var csvWriter = new CsvWriter(streamWriter, CultureInfo.InvariantCulture);
+                // using var streamWriter = new StreamWriter(ReservationFile);
+                // using var csvWriter = new CsvReader(streamReader, CultureInfo.InvariantCulture);
 
-                csvWriter.WriteRecord(reservation);
+                // csvWriter.WriteRecord(reservation);
                 }
 
             catch (FileNotFoundException)
