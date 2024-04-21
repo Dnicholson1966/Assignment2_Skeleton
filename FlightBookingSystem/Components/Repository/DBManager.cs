@@ -20,7 +20,12 @@ namespace FlightBookingSystem.Components.Repository
         private static readonly string FlightFile = "flights.csv";
 
         // Note for below: We had to create a new, separate reservations file, since the old one was a read-only embedded resource.
-        private static readonly string ReservationFile = "../Components/Model/DBResources/reservations.csv";
+        private static readonly string ReservationFile = "../Reservations.csv";
+        private static string workingDirectory = Directory.GetParent(Environment.CurrentDirectory).Parent.Parent.FullName;
+
+
+
+
 
         private readonly FlightManager flightManager;
 
@@ -31,6 +36,8 @@ namespace FlightBookingSystem.Components.Repository
         private DBManager()
         {
             flightManager = FlightManager.INSTANCE;
+            // Had to create a separate file for reservations. I cannot read or write to it as it is an embedded resource.
+
         }
 
         public async Task InitializeAsync()
@@ -115,7 +122,7 @@ namespace FlightBookingSystem.Components.Repository
             catch (NullReferenceException)
             {
                 // Add handling
-                throw new NullReferenceException()  ;
+                throw new NullReferenceException();
             }
         }
 
@@ -129,14 +136,27 @@ namespace FlightBookingSystem.Components.Repository
         /// <exception cref="NullReferenceException"></exception>
         public async Task WriteReservation(Reservation reservation)
         {
-                try
+            try
+            {
+                FileStream fs = File.Create(ReservationFile); // Create the file, or overwrite if the file exists. Not actually fully intended, just testing...
+                var records = new List<Reservation>() // Cheap hack to work with csvWriter. Single records: "WriteRecord(records)" doesn't seem to work.
                 {
-                using var stream = await FileSystem.OpenAppPackageFileAsync(ReservationFile);
-                // using var streamWriter = new StreamWriter(ReservationFile);
-                // using var csvWriter = new CsvReader(streamReader, CultureInfo.InvariantCulture);
+                    reservation
+                };
 
-                // csvWriter.WriteRecord(reservation);
+                // Dont' write header again, to allow appending. Doesn't work...
+                //var config = new CsvConfiguration(CultureInfo.InvariantCulture);
+                //config.HasHeaderRecord = false;
+
+                using (var stream = File.Open(ReservationFile, FileMode.Append))
+                {
+                    StreamWriter newWriter = new StreamWriter(stream);
+                    using var csvAppend = new CsvWriter(newWriter, CultureInfo.InvariantCulture);
+                    {
+                        csvAppend.WriteRecords(records);
+                    }
                 }
+            }
 
             catch (FileNotFoundException)
             {
@@ -147,6 +167,10 @@ namespace FlightBookingSystem.Components.Repository
             {
                 // Add MORE handling
                 throw new NullReferenceException();
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.ToString());
             }
         }
 
